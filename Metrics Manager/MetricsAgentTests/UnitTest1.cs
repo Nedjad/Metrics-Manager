@@ -1,113 +1,122 @@
+using Metrics_Manager.Models;
 using MetricsAgent.Controllers;
+using MetricsAgent.DAL;
+using MetricsAgent.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
 using System;
 using Xunit;
+
 
 namespace MetricsAgentTests
 {
     public class CpuAgentControllerUnitTests
     {
         private CpuAgentController Controller;
+        private Mock<ICpuMetricsRepository> mock;
 
         public CpuAgentControllerUnitTests()
         {
-            Controller = new CpuAgentController();
+            mock = new Mock<ICpuMetricsRepository>();
+
+            Controller = new CpuAgentController(NullLogger<CpuAgentController>.Instance, mock.Object);
         }
 
         [Fact]
         public void GetMetricsFromAgent_returnsOk()
         {
-            var agentId = 1;
-            var fromTime = DateTimeOffset.FromUnixTimeSeconds(0);
-            var toTime = DateTimeOffset.FromUnixTimeSeconds(100);
+            mock.Setup(repository => repository.Create(It.IsAny<CpuMetrics>())).Verifiable();
 
-            var result = Controller.GetMetricsAgent(agentId, fromTime, toTime);
+            var result = Controller.Create(new CpuMetrics()
+            { Time = TimeSpan.FromSeconds(1), Value = 50 });
 
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
+            mock.Verify(repository => repository.Create(It.IsAny<CpuMetrics>()), Times.AtMostOnce());
+
+
         }
     }
     public class DotNetAgentControllerUnitTests
     {
-        private CpuAgentController Controller;
+        private DotNetAgentController Controller;
+        private Mock<IDotNetMetricsRepository> _mock;
 
         public DotNetAgentControllerUnitTests()
         {
-            Controller = new CpuAgentController();
+            _mock = new Mock<IDotNetMetricsRepository>();
+            Controller = new DotNetAgentController(NullLogger<DotNetAgentController>.Instance, _mock.Object);
         }
 
         [Fact]
-        public void GetMetricsFromAgent_returnsOk()
+        public void CreateShouldCallCreateFromRepository()
         {
-            var agentId = 1;
-            var fromTime = DateTimeOffset.FromUnixTimeSeconds(0);
-            var toTime = DateTimeOffset.FromUnixTimeSeconds(100);
+            _mock.Setup(repository => repository.Create(It.IsAny<DotNetMetrics>())).Verifiable();
+            var result = Controller.Create(new DotNetMetrics()
+            { Time = TimeSpan.FromSeconds(1), Value = 50 });
+            _mock.Verify(repository => repository.Create(It.IsAny<DotNetMetrics>()), Times.AtMostOnce());
 
-            var result = Controller.GetMetricsAgent(agentId, fromTime, toTime);
-
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
         }
     }
     public class HddAgentControllerUnitTests
     {
-        private CpuAgentController Controller;
+        private HddAgentController Controller;
+        private Mock<IHddMetricsRepository> _mock;
 
         public HddAgentControllerUnitTests()
         {
-            Controller = new CpuAgentController();
+            _mock = new Mock<IHddMetricsRepository>();
+            Controller = new HddAgentController(NullLogger<HddAgentController>.Instance, _mock.Object);
+
         }
 
         [Fact]
         public void GetMetricsFromAgent_returnsOk()
         {
-            var agentId = 1;
-            var fromTime = DateTimeOffset.FromUnixTimeSeconds(0);
-            var toTime = DateTimeOffset.FromUnixTimeSeconds(100);
-
-            var result = Controller.GetMetricsAgent(agentId, fromTime, toTime);
-
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
+            _mock.Setup(repository => repository.Create(It.IsAny<HddMetrics>())).Verifiable();
+            var result = Controller.Create(new HddMetrics() { Time = TimeSpan.FromSeconds(1), Value = 50 });
+            _mock.Verify(repository => repository.Create(It.IsAny<HddMetrics>()), Times.AtMostOnce());
         }
     }
     public class NetworkAgentControllerUnitTests
     {
-        private CpuAgentController Controller;
+        private NetworkAgentController Controller;
+        private Mock<INetworkMetricsRepository> _mock;
 
         public NetworkAgentControllerUnitTests()
         {
-            Controller = new CpuAgentController();
+            _mock = new Mock<INetworkMetricsRepository>();
+            Controller = new NetworkAgentController(NullLogger<NetworkAgentController>.Instance, _mock.Object);
+
         }
 
         [Fact]
         public void GetMetricsFromAgent_returnsOk()
         {
-            var agentId = 1;
-            var fromTime = DateTimeOffset.FromUnixTimeSeconds(0);
-            var toTime = DateTimeOffset.FromUnixTimeSeconds(100);
-
-            var result = Controller.GetMetricsAgent(agentId, fromTime, toTime);
-
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
+            _mock.Setup(repository => repository.Create(It.IsAny<NetworkMetrics>())).Verifiable();
+            var result = Controller.Create(new NetworkMetrics()
+            { Time = TimeSpan.FromSeconds(1), Value = 50 });
+            _mock.Verify(repository => repository.Create(It.IsAny<NetworkMetrics>()), Times.AtMostOnce());
         }
     }
     public class RamAgentControllerUnitTests
     {
-        private CpuAgentController Controller;
+        private RamAgentController Controller;
+        private Mock<IRamMetricsRepository> _mock;
 
         public RamAgentControllerUnitTests()
         {
-            Controller = new CpuAgentController();
+            _mock = new Mock<IRamMetricsRepository>();
+            Controller = new RamAgentController(NullLogger<RamAgentController>.Instance, _mock.Object);
         }
 
         [Fact]
         public void GetMetricsFromAgent_returnsOk()
         {
-            var agentId = 1;
-            var fromTime = DateTimeOffset.FromUnixTimeSeconds(0);
-            var toTime = DateTimeOffset.FromUnixTimeSeconds(100);
+            _mock.Setup(repository => repository.Create(It.IsAny<RamMetrics>())).Verifiable();
 
-            var result = Controller.GetMetricsAgent(agentId, fromTime, toTime);
-
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
+            var result = Controller.Create(new RamMetrics()
+            { Time = TimeSpan.FromSeconds(1), Value = 50 });
+            _mock.Verify(repository => repository.Create(It.IsAny<RamMetrics>()), Times.AtMostOnce);
         }
     }
 }
