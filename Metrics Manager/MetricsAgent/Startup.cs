@@ -1,3 +1,4 @@
+using MetricsAgent.Job;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -7,6 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Quartz;
+using Quartz.Impl;
+using Quartz.Spi;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -27,6 +31,17 @@ namespace MetricsAgent
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHostedService<QuartzHostedService>();
+
+            services.AddSingleton<IJobFactory, SingletonJobFactory>();
+            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+
+            services.AddSingleton<CpuMetricsJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(CpuMetricsJob),
+                cronExpression: "0/5 * * * * ?")); 
+            
+
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
