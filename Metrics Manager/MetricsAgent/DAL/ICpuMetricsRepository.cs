@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Metrics_Manager.Models;
+using MetricsAgent.Model;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -10,9 +11,9 @@ namespace MetricsAgent.DAL
 {
     public interface ICpuMetricsRepository : IRepository<CpuMetrics>
     {
-        
+        void Create(CPUMetrics cPUMetrics);
     }
-    
+
 
     public class CpuMetricsRepository : IRepository<CpuMetrics>
     {
