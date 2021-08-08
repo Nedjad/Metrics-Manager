@@ -9,5 +9,7 @@ namespace Metrics_Manager
     {
         public int AgentId { get; }
         public Uri AgentAddress { get; }
+        public Uri AgentUrl { get; internal set; }
+        public bool IsEnabled { get; internal set; }
     }
 }
