@@ -12,5 +12,6 @@ namespace Metrics_Manager.Models
         public int Value { get; set; }
 
         public TimeSpan Time { get; set; }
+        public int AgentId { get; internal set; }
     }
 }

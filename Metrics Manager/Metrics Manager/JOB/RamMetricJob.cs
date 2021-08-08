@@ -70,4 +70,5 @@ namespace Metrics_Manager.JOB
                 _logger.LogError(e.Message);
             }
         }
+    }
 }

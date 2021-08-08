@@ -1,3 +1,6 @@
+using AutoMapper;
+using Metrics_Manager.DAL;
+using Metrics_Manager.Repo;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +29,14 @@ namespace Metrics_Manager
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddHostedService<QuartzHostedService>();
+
+            services.AddSingleton<CpuMetricsRepository, CpuMetricsRepository>();
+            services.AddSingleton<RamMetricRepository, RamMetricRepository>();
+            services.AddSingleton<DotNetMetricRepository, DotNetMetricRepository>();
+            services.AddSingleton<HddMEtricsRepository, HddMEtricsRepository>();
+            services.AddSingleton<NetworkMetricRepository, NetworkMetricRepository>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
